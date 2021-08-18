@@ -24,9 +24,61 @@
 
 package main
 
-import "fmt"
+import (
+	"context"
+	"testing"
+)
 
-func main() {
-	// you can delete this after clone template
-	fmt.Println("hello world")
+var gitlabInfo = GitlabInfo{
+	token: "your-gitlab-token",
+	url:   "https://gitlab.com", // or other private gitlab site
+}
+
+func TestPullCode(t *testing.T) {
+	g := NewGitPull(context.TODO(), &gitlabInfo, nil)
+	res, err := g.pullTag(
+		"/tmp/xxx",
+		"https://xxxxx/xxxx/xxx.git",
+		"refs/tags/v0.0.1",
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log("res", res)
+	return
+}
+
+func TestPullCommit(t *testing.T) {
+	g := NewGitPull(context.TODO(), &gitlabInfo, nil)
+	res, err := g.pullBranchCommit(
+		"/tmp/xxx",
+		"https://xxxx/xxx/xxxx.git",
+		"refs/heads/master",
+		"xxxxx",
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log("res", res)
+	return
+}
+
+func TestGitPull_Pull(t *testing.T) {
+
+	g := NewGitPull(context.TODO(), &gitlabInfo, &Task{
+		Id:           1,
+		ProjectId:    238,
+		VersionType:  branchType,
+		VersionValue: "master",
+		CommitId:     "xxx",
+	})
+
+	err := g.Pull()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log("ok")
 }
